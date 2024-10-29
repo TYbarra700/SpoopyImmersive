@@ -136,6 +136,8 @@ public class FlashlightManager : MonoBehaviour
             int jumpscareType = Random.Range(1, 4); // Jumpscare types 1, 2, 3
             Debug.Log($"Jumpscare occurred! Type: {jumpscareType}, Chance: {jumpscareChance}%");
 
+            // call event on jumpscare manager to do jumpscare
+
             // Reset the chance after a jumpscare occurs
             jumpscareChance = Random.Range(40f, 100f);
         }

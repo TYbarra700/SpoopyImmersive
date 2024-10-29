@@ -4,15 +4,18 @@ using UnityEngine;
 
 public class JumpscareManager : MonoBehaviour
 {
-    // Start is called before the first frame update
+    [SerializeField] 
+    // flashlight manager script
+    // hands 3d model
+
     void Start()
     {
         
     }
 
-    // Update is called once per frame
     void Update()
     {
         
     }
+
 }
