@@ -4,9 +4,18 @@ using UnityEngine;
 
 public class JumpscareManager : MonoBehaviour
 {
-    [SerializeField] 
-    // flashlight manager script
-    // hands 3d model
+    [SerializeField]
+    private void OnEnable()
+    {
+        FlashlightManager.OnJumpscare += Jumpscare();
+
+    }
+
+    private void OnDisable()
+    {
+        FlashlightManager.OnJumpscare -= Jumpscare();
+
+    }
 
     void Start()
     {
@@ -17,5 +26,11 @@ public class JumpscareManager : MonoBehaviour
     {
         
     }
+
+    void Jumpscare()
+    {
+        Debug.Log($"Jumpscare occurred! Type: {jumpscareType});
+    }
+
 
 }

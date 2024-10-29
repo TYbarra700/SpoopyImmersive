@@ -20,6 +20,8 @@ public class FlashlightManager : MonoBehaviour
 
     private float jumpscareChance = 0.0f;
     private bool hasJumpscareOccurred = false;
+    public delegate void JumpscareAction(int jumpscareType);
+    public static event JumpscareAction OnJumpscare;
 
     void Start()
     {
@@ -44,6 +46,8 @@ public class FlashlightManager : MonoBehaviour
             {
                 LightOn();
             }
+
+            // turn on trigger to turn on / off flashlight
         }
     }
 
@@ -72,14 +76,14 @@ public class FlashlightManager : MonoBehaviour
 
     IEnumerator FadeOutLight()
     {
-        float startIntensity = fullIntensity;
+        //float startIntensity = fullIntensity;
         float elapsedTime = 0;
 
         while (remainingBattery > 0)
         {
             elapsedTime += Time.deltaTime;
             remainingBattery = Mathf.Clamp(10.0f - elapsedTime, 0, 10.0f); // Decrease battery smoothly over time
-            spotLight.intensity = Mathf.Lerp(startIntensity, 0, elapsedTime / 10.0f); // Dim over 6 seconds
+            //spotLight.intensity = Mathf.Lerp(startIntensity, 0, elapsedTime / 10.0f); // Dim over 6 seconds
 
             if (!isLightOn)
             {
@@ -137,6 +141,8 @@ public class FlashlightManager : MonoBehaviour
             Debug.Log($"Jumpscare occurred! Type: {jumpscareType}, Chance: {jumpscareChance}%");
 
             // call event on jumpscare manager to do jumpscare
+            if (OnJumpscare != null) OnJumpscare(jumpscareType);
+
 
             // Reset the chance after a jumpscare occurs
             jumpscareChance = Random.Range(40f, 100f);
