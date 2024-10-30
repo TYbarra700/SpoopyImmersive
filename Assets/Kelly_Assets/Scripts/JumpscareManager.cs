@@ -10,6 +10,7 @@ public class JumpscareManager : MonoBehaviour
     [SerializeField] private AudioClip jumpscareSound;
     [SerializeField] private Image screenOverlay; // UI Image used as a green filter
     [SerializeField] private CanvasGroup fadeCanvasGroup; // To control camera fade-in and fade-out
+    private Color32 spookyGreen = new Color32(33, 93, 31, 150);
 
     private void OnEnable()
     {
@@ -43,7 +44,12 @@ public class JumpscareManager : MonoBehaviour
         audioSource.PlayOneShot(jumpscareSound);
 
         // 3. Apply green filter effect
-        screenOverlay.color = new Color(0, 1, 0, 0.5f); // Set to semi-transparent green
+        //screenOverlay.color = new Color(52, 70, 53, 0.5f); // Set to semi-transparent green
+        screenOverlay.color = spookyGreen;
+        fadeCanvasGroup.alpha = .6f;
+
+        // allow green effect to stay a lil
+        yield return new WaitForSeconds(1.5f);
 
         // 4. Fade camera to black
         yield return StartCoroutine(FadeToBlack());
@@ -66,11 +72,13 @@ public class JumpscareManager : MonoBehaviour
 
         while (elapsedTime < duration)
         {
-            fadeCanvasGroup.alpha = Mathf.Lerp(0, 1, elapsedTime / duration);
+            screenOverlay.color = Color.Lerp(spookyGreen, Color.black,  elapsedTime / duration);
+            fadeCanvasGroup.alpha = Mathf.Lerp(0.6f, 1, elapsedTime / duration);
             elapsedTime += Time.deltaTime;
             yield return null;
         }
         fadeCanvasGroup.alpha = 1;
+        screenOverlay.color = Color.black;
     }
 
     private IEnumerator FadeToClear()

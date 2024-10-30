@@ -31,6 +31,7 @@ public class FlashlightManager : MonoBehaviour
     void Update()
     {
         UpdateLightState();
+        CheckJumpscare();
     }
 
     private void UpdateLightState()
@@ -49,6 +50,13 @@ public class FlashlightManager : MonoBehaviour
 
             // turn on trigger to turn on / off flashlight
         }
+
+
+        // temporary jumpscare test
+        if (Input.GetKeyDown(KeyCode.J))
+        {
+            jumpscareChance = 100f;
+        }
     }
 
     private void LightOn()
@@ -61,7 +69,7 @@ public class FlashlightManager : MonoBehaviour
             spotLight.enabled = true;
             isLightOn = true;
 
-            StartCoroutine(FadeOutLight());
+            StartCoroutine(FlashlightDies());
             UpdateJumpscareChance();
         }
     }
@@ -74,7 +82,7 @@ public class FlashlightManager : MonoBehaviour
         UpdateJumpscareChance();
     }
 
-    IEnumerator FadeOutLight()
+    IEnumerator FlashlightDies()
     {
         //float startIntensity = fullIntensity;
         float elapsedTime = 0;
@@ -132,8 +140,12 @@ public class FlashlightManager : MonoBehaviour
         // Increase the chance slightly for each use
         jumpscareChance += isLightOn ? Random.Range(0.1f, 1.0f) : Random.Range(0f, 0.5f);
 
+        Debug.Log($"JumpscareChance = {jumpscareChance}");
+    }
+
+    void CheckJumpscare()
+    {
         // Determine if a jumpscare happens
-        //float randomValue = Random.Range(0f, 100f);
         if (jumpscareChance >= 85f)
         {
             // Simulate different types of jumpscares
@@ -145,9 +157,7 @@ public class FlashlightManager : MonoBehaviour
             OnJumpscare?.Invoke(jumpscareType);
 
             // Reset the chance after a jumpscare occurs
-            jumpscareChance = Random.Range(40f, 100f);
+            jumpscareChance = 0f;
         }
-
-        Debug.Log($"JumpscareChance = {jumpscareChance}");
     }
 }
