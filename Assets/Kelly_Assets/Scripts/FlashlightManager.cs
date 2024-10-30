@@ -15,7 +15,7 @@ public class FlashlightManager : MonoBehaviour
     private float fullIntensity = 4.06f;
     private float remainingBattery = 10.0f; // 6 seconds of battery
     private bool isRecharging = false;
-    private float rechargeTime = 11.0f; // 5 seconds recharge time
+    private float rechargeTime = 9.0f; // 5 seconds recharge time
     private bool canTurnOn = true;
 
     private float jumpscareChance = 0.0f;
@@ -113,7 +113,7 @@ public class FlashlightManager : MonoBehaviour
 
         yield return new WaitForSeconds(rechargeTime); // Wait for 5 seconds to recharge
 
-        remainingBattery = 6.0f; // Reset battery after recharge
+        remainingBattery = 10.0f; // Reset battery after recharge
         isRecharging = false;
         canTurnOn = true; // Allow flashlight to turn on again
     }
@@ -130,7 +130,7 @@ public class FlashlightManager : MonoBehaviour
         }
 
         // Increase the chance slightly for each use
-        jumpscareChance += 1f * Time.deltaTime;
+        jumpscareChance += isLightOn ? Random.Range(0.1f, 1.0f) : Random.Range(0f, 0.5f);
 
         // Determine if a jumpscare happens
         //float randomValue = Random.Range(0f, 100f);
@@ -141,8 +141,8 @@ public class FlashlightManager : MonoBehaviour
             Debug.Log($"Jumpscare occurred! Type: {jumpscareType}, Chance: {jumpscareChance}%");
 
             // call event on jumpscare manager to do jumpscare
-            if (OnJumpscare != null) OnJumpscare(jumpscareType);
-
+            //if (OnJumpscare != null) OnJumpscare(jumpscareType);
+            OnJumpscare?.Invoke(jumpscareType);
 
             // Reset the chance after a jumpscare occurs
             jumpscareChance = Random.Range(40f, 100f);
