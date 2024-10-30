@@ -977,7 +977,7 @@ MonoBehaviour:
   hands: {fileID: 1180944050}
   player: {fileID: 1280966216}
   audioSource: {fileID: 38740519}
-  jumpscareSound: {fileID: 8300000, guid: 6f3621c40d4051440bff674daf22ce8f, type: 3}
+  jumpscareSound: {fileID: 8300000, guid: 29a944a6224fb9147901610ecd00db91, type: 3}
   screenOverlay: {fileID: 164839199}
   fadeCanvasGroup: {fileID: 1186326271}
 --- !u!1 &376760090
