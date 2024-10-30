@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.XR;
 
 public class FlashlightManager : MonoBehaviour
 {
@@ -22,6 +23,8 @@ public class FlashlightManager : MonoBehaviour
     private bool hasJumpscareOccurred = false;
     public delegate void JumpscareAction(int jumpscareType);
     public static event JumpscareAction OnJumpscare;
+    private InputDevice leftController;
+    private InputDevice rightController;
 
     void Start()
     {
@@ -36,7 +39,8 @@ public class FlashlightManager : MonoBehaviour
 
     private void UpdateLightState()
     {
-        if ((Input.GetKeyDown(KeyCode.L) || Input.GetKeyDown(KeyCode.Space)))
+        // Check if "l" or the main trigger is pressed on the right controller
+        if (Input.GetKeyDown(KeyCode.L) || rightController.TryGetFeatureValue(CommonUsages.triggerButton, out bool isTriggerPressed) && isTriggerPressed)
         {
             if (isLightOn)
             {
@@ -54,6 +58,12 @@ public class FlashlightManager : MonoBehaviour
 
         // temporary jumpscare test
         if (Input.GetKeyDown(KeyCode.J))
+        {
+            jumpscareChance = 100f;
+        }
+
+        // Check if the A button is pressed on the left controller
+        if (leftController.TryGetFeatureValue(CommonUsages.primaryButton, out bool isAPressed) && isAPressed)
         {
             jumpscareChance = 100f;
         }
