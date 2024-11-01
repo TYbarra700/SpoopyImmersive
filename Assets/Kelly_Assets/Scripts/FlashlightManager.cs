@@ -29,18 +29,37 @@ public class FlashlightManager : MonoBehaviour
     void Start()
     {
         LightOff();
+        leftController = InputDevices.GetDeviceAtXRNode(XRNode.LeftHand);
+        rightController = InputDevices.GetDeviceAtXRNode(XRNode.RightHand);
     }
 
     void Update()
     {
+        // Ensure controllers are assigned
+        if (!leftController.isValid || !rightController.isValid)
+        {
+            AssignControllers();
+        }
+
         UpdateLightState();
         CheckJumpscare();
+    }
+
+    private void AssignControllers()
+    {
+        var devices = new List<InputDevice>();
+        InputDevices.GetDevicesAtXRNode(XRNode.LeftHand, devices);
+        if (devices.Count > 0) leftController = devices[0];
+
+        devices.Clear();
+        InputDevices.GetDevicesAtXRNode(XRNode.RightHand, devices);
+        if (devices.Count > 0) rightController = devices[0];
     }
 
     private void UpdateLightState()
     {
         // Check if "l" or the main trigger is pressed on the right controller
-        if (Input.GetKeyDown(KeyCode.L) || rightController.TryGetFeatureValue(CommonUsages.triggerButton, out bool isTriggerPressed) && isTriggerPressed)
+        if (Input.GetKeyDown(KeyCode.L) || (rightController.isValid && rightController.TryGetFeatureValue(CommonUsages.triggerButton, out bool isTriggerPressed) && isTriggerPressed))
         {
             if (isLightOn)
             {
@@ -63,7 +82,7 @@ public class FlashlightManager : MonoBehaviour
         }
 
         // Check if the A button is pressed on the left controller
-        if (leftController.TryGetFeatureValue(CommonUsages.primaryButton, out bool isAPressed) && isAPressed)
+        if (leftController.isValid && leftController.TryGetFeatureValue(CommonUsages.primaryButton, out bool isYPressed) && isYPressed)
         {
             jumpscareChance = 100f;
         }
