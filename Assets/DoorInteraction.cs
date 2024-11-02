@@ -1,12 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using UnityEngine;
-using UnityEngine.Rendering;
 
 public class DoorInteraction : MonoBehaviour
 {
     public Animator doorAnimator;
+    public AudioSource doorAudioSource; // Reference to the AudioSource component
     private bool isOpen = false;
 
     public void OpenDoor()
@@ -15,6 +14,16 @@ public class DoorInteraction : MonoBehaviour
         {
             isOpen = true;
             doorAnimator.SetTrigger("OpenDoor");
+
+            // Play the sound when the door opens
+            if (doorAudioSource != null)
+            {
+                doorAudioSource.Play();
+            }
+            else
+            {
+                Debug.LogWarning("No AudioSource assigned to doorAudioSource.");
+            }
         }
     }
 }
