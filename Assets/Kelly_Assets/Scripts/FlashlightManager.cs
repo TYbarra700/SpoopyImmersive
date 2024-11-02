@@ -18,6 +18,8 @@ public class FlashlightManager : MonoBehaviour
     private bool isRecharging = false;
     private float rechargeTime = 9.0f; // 5 seconds recharge time
     private bool canTurnOn = true;
+    private bool toggleCoolDown = false;
+    private bool wasTriggerPressed = false;
 
     private float jumpscareChance = 0.0f;
     private bool hasJumpscareOccurred = false;
@@ -58,20 +60,29 @@ public class FlashlightManager : MonoBehaviour
 
     private void UpdateLightState()
     {
-        // Check if "l" or the main trigger is pressed on the right controller
-        if (Input.GetKeyDown(KeyCode.L) || (rightController.isValid && rightController.TryGetFeatureValue(CommonUsages.triggerButton, out bool isTriggerPressed) && isTriggerPressed))
+        // Check if the right controller's trigger is pressed and if it should toggle the flashlight
+        if (rightController.isValid &&
+            rightController.TryGetFeatureValue(CommonUsages.triggerButton, out bool isTriggerPressed))
         {
-            if (isLightOn)
+            if (isTriggerPressed && !wasTriggerPressed)
             {
-                LightOff();
-                audioSource.PlayOneShot(audioClips[0]);
-            }
-            else
-            {
-                LightOn();
+                // Toggle the flashlight
+                if (isLightOn)
+                {
+                    audioSource.PlayOneShot(audioClips[0]);
+                    LightOff();
+                }
+                else
+                {
+                    LightOn();
+                }
+
+                // Begin cooldown after toggling
+                StartCoroutine(ToggleCoolDownRoutine());
             }
 
-            // turn on trigger to turn on / off flashlight
+            // Update the previous state of the trigger
+            wasTriggerPressed = isTriggerPressed;
         }
 
 
@@ -86,6 +97,13 @@ public class FlashlightManager : MonoBehaviour
         {
             jumpscareChance = 100f;
         }
+    }
+
+    private IEnumerator ToggleCoolDownRoutine()
+    {
+        toggleCoolDown = true;
+        yield return new WaitForSeconds(0.5f);
+        toggleCoolDown = false;
     }
 
     private void LightOn()
