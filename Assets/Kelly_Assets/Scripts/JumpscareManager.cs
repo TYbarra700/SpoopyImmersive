@@ -40,12 +40,14 @@ public class JumpscareManager : MonoBehaviour
     private IEnumerator PlayJumpscare()
     {
         // Position hands a set distance in front of the player's camera, aligning with the camera's orientation
-        Vector3 handPositionOffset = player.forward * 1f + player.up * -0.2f; // Adjust forward and height offset as needed
+        Vector3 handPositionOffset = player.forward + player.up; // Adjust forward and height offset as needed
         hands.position = player.position + handPositionOffset;
 
         // Rotate hands to face the player by matching camera's rotation
         hands.rotation = Quaternion.LookRotation(hands.position - player.position);
-        hands.Rotate(0, 180, 0); // Flip rotation 180 degrees to ensure palms face player
+        //hands.Rotate(0, 180, 0); // Flip rotation 180 degrees to ensure palms face player
+
+        
 
         hands.gameObject.SetActive(true);
 
