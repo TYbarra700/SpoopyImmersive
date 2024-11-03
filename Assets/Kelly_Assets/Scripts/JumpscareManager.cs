@@ -8,9 +8,13 @@ public class JumpscareManager : MonoBehaviour
     [SerializeField] private Transform player;
     [SerializeField] private AudioSource audioSource;
     [SerializeField] private AudioClip jumpscareSound;
-    [SerializeField] private Image screenOverlay; // UI Image used as a green filter
-    [SerializeField] private CanvasGroup fadeCanvasGroup; // To control camera fade-in and fade-out
+    [SerializeField] private Material _material;
+    [SerializeField] private GameObject fadeBox;
+
+    
     private Color32 spookyGreen = new Color32(33, 93, 31, 150);
+    //[SerializeField] private Image screenOverlay; // UI Image used as a green filter
+    //[SerializeField] private CanvasGroup fadeCanvasGroup; // To control camera fade-in and fade-out
 
     private void OnEnable()
     {
@@ -24,9 +28,8 @@ public class JumpscareManager : MonoBehaviour
 
     private void Start()
     {
-        screenOverlay.color = Color.clear;
-        fadeCanvasGroup.alpha = 0; // Fully visible screen at start
         hands.gameObject.SetActive(false); // Hide hands initially
+        fadeBox.SetActive(false);
     }
 
     private void TriggerJumpscare(int jumpscareType)
@@ -44,15 +47,15 @@ public class JumpscareManager : MonoBehaviour
         audioSource.PlayOneShot(jumpscareSound);
 
         // 3. Apply green filter effect
-        //screenOverlay.color = new Color(52, 70, 53, 0.5f); // Set to semi-transparent green
-        screenOverlay.color = spookyGreen;
-        fadeCanvasGroup.alpha = .6f;
+        fadeBox.SetActive(true);
+        _material.SetColor("_Color", spookyGreen);
+        _material.SetFloat("_Alpha", .6f);
 
         // allow green effect to stay a lil
         yield return new WaitForSeconds(1.5f);
 
         // 4. Fade camera to black
-        yield return StartCoroutine(FadeToBlack());
+        yield return StartCoroutine(FadeEffect());
 
         // 5. Wait briefly before fading back in
         yield return new WaitForSeconds(1.5f);
@@ -62,24 +65,44 @@ public class JumpscareManager : MonoBehaviour
 
         // Reset
         hands.gameObject.SetActive(false);
-        screenOverlay.color = Color.clear;
+        _material.SetFloat("_Alpha", 0);
+        fadeBox.SetActive(false);
     }
 
-    private IEnumerator FadeToBlack()
+    //private IEnumerator FadeToBlack()
+    //{
+    //    float duration = 0.5f;
+    //    float elapsedTime = 0;
+
+    //    while (elapsedTime < duration)
+    //    {
+    //        screenOverlay.color = Color.Lerp(spookyGreen, Color.black,  elapsedTime / duration);
+    //        fadeCanvasGroup.alpha = Mathf.Lerp(0.6f, 1, elapsedTime / duration);
+    //        elapsedTime += Time.deltaTime;
+    //        yield return null;
+    //    }
+    //    fadeCanvasGroup.alpha = 1;
+    //    screenOverlay.color = Color.black;
+    //}
+
+    private IEnumerator FadeEffect()
     {
         float duration = 0.5f;
         float elapsedTime = 0;
+        float endAlpha = 1;
+        float startAlpha = _material.GetFloat("_Alpha");
 
         while (elapsedTime < duration)
         {
-            screenOverlay.color = Color.Lerp(spookyGreen, Color.black,  elapsedTime / duration);
-            fadeCanvasGroup.alpha = Mathf.Lerp(0.6f, 1, elapsedTime / duration);
+            _material.SetColor("_Color", Color.Lerp(spookyGreen, Color.black, elapsedTime / duration));
+            _material.SetFloat("_Alpha", Mathf.Lerp(startAlpha, endAlpha, elapsedTime / duration));
             elapsedTime += Time.deltaTime;
             yield return null;
         }
-        fadeCanvasGroup.alpha = 1;
-        screenOverlay.color = Color.black;
+        _material.SetColor("_Color", Color.black);
+        _material.SetFloat("_Alpha", endAlpha);
     }
+    
 
     private IEnumerator FadeToClear()
     {
@@ -88,10 +111,10 @@ public class JumpscareManager : MonoBehaviour
 
         while (elapsedTime < duration)
         {
-            fadeCanvasGroup.alpha = Mathf.Lerp(1, 0, elapsedTime / duration);
+            _material.SetFloat("_Alpha", Mathf.Lerp(1, 0, elapsedTime / duration));
             elapsedTime += Time.deltaTime;
             yield return null;
         }
-        fadeCanvasGroup.alpha = 0;
+        
     }
 }
