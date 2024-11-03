@@ -39,12 +39,18 @@ public class JumpscareManager : MonoBehaviour
 
     private IEnumerator PlayJumpscare()
     {
-        // 1. Position hands and enable them
-        hands.position = player.position + player.forward * 1.5f; // Adjust distance as needed
+        // Position hands a set distance in front of the player's camera, aligning with the camera's orientation
+        Vector3 handPositionOffset = player.forward * 1f + player.up * -0.2f; // Adjust forward and height offset as needed
+        hands.position = player.position + handPositionOffset;
+
+        // Rotate hands to face the player by matching camera's rotation
+        hands.rotation = Quaternion.LookRotation(hands.position - player.position);
+        hands.Rotate(0, 180, 0); // Flip rotation 180 degrees to ensure palms face player
+
         hands.gameObject.SetActive(true);
 
         // 2. Play creepy sound
-        audioSource.PlayOneShot(jumpscareSound);
+        if(!audioSource.isPlaying) audioSource.PlayOneShot(jumpscareSound);
 
         // 3. Apply green filter effect
         fadeBox.SetActive(true);
@@ -61,10 +67,10 @@ public class JumpscareManager : MonoBehaviour
         yield return new WaitForSeconds(1.5f);
 
         // 6. Fade camera back to normal
+        hands.gameObject.SetActive(false);
         yield return StartCoroutine(FadeToClear());
 
         // Reset
-        hands.gameObject.SetActive(false);
         _material.SetFloat("_Alpha", 0);
         fadeBox.SetActive(false);
     }
