@@ -11,6 +11,8 @@ public class JumpscareManager : MonoBehaviour
     [SerializeField] private Material _material;
     [SerializeField] private GameObject fadeBox;
 
+    [SerializeField] private Vector3 handOffset = new Vector3(0, -0.3f, 1.0f); // Editable offset for hand position
+    [SerializeField] private Vector3 handRotationOffset = new Vector3(0, 180, 0); // Editable offset for hand rotation
     
     private Color32 spookyGreen = new Color32(33, 93, 31, 150);
     //[SerializeField] private Image screenOverlay; // UI Image used as a green filter
@@ -39,44 +41,36 @@ public class JumpscareManager : MonoBehaviour
 
     private IEnumerator PlayJumpscare()
     {
-        // Position hands a set distance in front of the player's camera, aligning with the camera's orientation
-        Vector3 handPositionOffset = player.forward + player.up; // Adjust forward and height offset as needed
-        hands.position = player.position + handPositionOffset;
+        // Temporarily parent the hands to the player's camera (head)
+        Transform originalParent = hands.parent;
+        hands.SetParent(player, false);
 
-        // Rotate hands to face the player by matching camera's rotation
-        hands.rotation = Quaternion.LookRotation(hands.position - player.position);
-        //hands.Rotate(0, 180, 0); // Flip rotation 180 degrees to ensure palms face player
-
-        
+        // Set the hands' local position and rotation using the offsets
+        hands.localPosition = handOffset;
+        hands.localRotation = Quaternion.Euler(handRotationOffset);
 
         hands.gameObject.SetActive(true);
 
-        // 2. Play creepy sound
-        if(!audioSource.isPlaying) audioSource.PlayOneShot(jumpscareSound);
+        // Play sound
+        if (!audioSource.isPlaying) audioSource.PlayOneShot(jumpscareSound);
 
-        // 3. Apply green filter effect
-        fadeBox.SetActive(true);
-        _material.SetColor("_Color", spookyGreen);
-        _material.SetFloat("_Alpha", .6f);
-
-        // allow green effect to stay a lil
         yield return new WaitForSeconds(1.5f);
 
-        // 4. Fade camera to black
+        // Fade to black
         yield return StartCoroutine(FadeEffect());
 
-        // 5. Wait briefly before fading back in
+        // Wait briefly before fading back in
         yield return new WaitForSeconds(1.5f);
 
-        // 6. Fade camera back to normal
+        // Fade back to normal
         hands.gameObject.SetActive(false);
+
+        // Reset hands' parent
+        hands.SetParent(originalParent);
         yield return StartCoroutine(FadeToClear());
 
-        // Reset
-        _material.SetFloat("_Alpha", 0);
         fadeBox.SetActive(false);
     }
-
     //private IEnumerator FadeToBlack()
     //{
     //    float duration = 0.5f;
@@ -102,7 +96,7 @@ public class JumpscareManager : MonoBehaviour
 
         while (elapsedTime < duration)
         {
-            _material.SetColor("_Color", Color.Lerp(spookyGreen, Color.black, elapsedTime / duration));
+            //_material.SetColor("_Color", Color.Lerp(spookyGreen, Color.black, elapsedTime / duration));
             _material.SetFloat("_Alpha", Mathf.Lerp(startAlpha, endAlpha, elapsedTime / duration));
             elapsedTime += Time.deltaTime;
             yield return null;
