@@ -8381,6 +8381,67 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4536291819999006714, guid: b77571231801e2c47ba0f08c87dbbdf2, type: 3}
   m_PrefabInstance: {fileID: 667088361}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &675207026
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 2356958653308694819, guid: ef26b2dc882f2d741b1e5521ca67f8ef, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2356958653308694819, guid: ef26b2dc882f2d741b1e5521ca67f8ef, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.736
+      objectReference: {fileID: 0}
+    - target: {fileID: 2356958653308694819, guid: ef26b2dc882f2d741b1e5521ca67f8ef, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2356958653308694819, guid: ef26b2dc882f2d741b1e5521ca67f8ef, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2356958653308694819, guid: ef26b2dc882f2d741b1e5521ca67f8ef, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2356958653308694819, guid: ef26b2dc882f2d741b1e5521ca67f8ef, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2356958653308694819, guid: ef26b2dc882f2d741b1e5521ca67f8ef, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2356958653308694819, guid: ef26b2dc882f2d741b1e5521ca67f8ef, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2356958653308694819, guid: ef26b2dc882f2d741b1e5521ca67f8ef, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2356958653308694819, guid: ef26b2dc882f2d741b1e5521ca67f8ef, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3170052297267817369, guid: ef26b2dc882f2d741b1e5521ca67f8ef, type: 3}
+      propertyPath: m_Name
+      value: ShirtlessZombie_BodyParts_FREE_URP
+      objectReference: {fileID: 0}
+    - target: {fileID: 8526921292140686169, guid: ef26b2dc882f2d741b1e5521ca67f8ef, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 71ee66e071605464a950faa22612ab69, type: 2}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: ef26b2dc882f2d741b1e5521ca67f8ef, type: 3}
 --- !u!1 &676660993
 GameObject:
   m_ObjectHideFlags: 0
@@ -8893,7 +8954,7 @@ MonoBehaviour:
   hands: {fileID: 1391587074}
   player: {fileID: 9068109559934000741}
   audioSource: {fileID: 1998005797}
-  jumpscareSound: {fileID: 8300000, guid: 29a944a6224fb9147901610ecd00db91, type: 3}
+  jumpscareSound: {fileID: 8300000, guid: b40881307a192af499192984ca9acac1, type: 3}
   _material: {fileID: 2100000, guid: 0bd47d26c27f2e84c8c6bdefc505662c, type: 2}
   fadeBox: {fileID: 124897654}
   handOffset: {x: 0.2, y: 0, z: 0.1}
@@ -10831,6 +10892,7 @@ MonoBehaviour:
   audioClips:
   - {fileID: 8300000, guid: 6427e9700917daf42bcc5494479526bf, type: 3}
   - {fileID: 8300000, guid: 6f3621c40d4051440bff674daf22ce8f, type: 3}
+  - {fileID: 8300000, guid: 29a944a6224fb9147901610ecd00db91, type: 3}
   isLightOn: 1
   lightIntensity: 4.06
 --- !u!4 &913754631
@@ -22290,6 +22352,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3595616301021685240, guid: ed93f25c7c7a22c4391b4e964e061403, type: 3}
+      propertyPath: far clip plane
+      value: 100000
+      objectReference: {fileID: 0}
     - target: {fileID: 5531301697940172479, guid: ed93f25c7c7a22c4391b4e964e061403, type: 3}
       propertyPath: m_Name
       value: XR Origin (XR Rig)
@@ -22387,3 +22453,4 @@ SceneRoots:
   - {fileID: 724883195}
   - {fileID: 1703569875}
   - {fileID: 1725993490}
+  - {fileID: 675207026}

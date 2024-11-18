@@ -9,20 +9,22 @@ public class FlashlightManager : MonoBehaviour
     [SerializeField] private GameObject flashlight_OBJ;
     [SerializeField] private Light spotLight;
     [SerializeField] private AudioSource audioSource;
-    [SerializeField] private AudioClip[] audioClips; // 0 is click sfx; 1 is battery going out
+    [SerializeField] private AudioClip[] audioClips; // 0 is click sfx; 1 is battery going out; 2 is halfway cue
 
     [SerializeField] private bool isLightOn = false;
     [SerializeField] private float lightIntensity = 4.06f;
     private float fullIntensity = 4.06f;
-    private float remainingBattery = 10.0f; // 6 seconds of battery
+    private float remainingBattery = 10.0f; // 10 seconds of battery
     private bool isRecharging = false;
-    private float rechargeTime = 9.0f; // 5 seconds recharge time
+    private float rechargeTime = 9.0f; // 9 seconds recharge time
     private bool canTurnOn = true;
     private bool toggleCoolDown = false;
     private bool wasTriggerPressed = false;
 
-    private float jumpscareChance = 0.0f;
-    private bool hasJumpscareOccurred = false;
+    private float jumpscareTimer = 0f;
+    private float jumpscareThreshold = 20f; // Time in seconds before a jumpscare happens
+    private bool halfwayCuePlayed = false;
+
     public delegate void JumpscareAction(int jumpscareType);
     public static event JumpscareAction OnJumpscare;
     private InputDevice leftController;
@@ -44,7 +46,7 @@ public class FlashlightManager : MonoBehaviour
         }
 
         UpdateLightState();
-        CheckJumpscare();
+        UpdateJumpscareTimer();
     }
 
     private void AssignControllers()
@@ -84,19 +86,6 @@ public class FlashlightManager : MonoBehaviour
             // Update the previous state of the trigger
             wasTriggerPressed = isTriggerPressed;
         }
-
-
-        // temporary jumpscare test
-        if (Input.GetKeyDown(KeyCode.J))
-        {
-            jumpscareChance = 100f;
-        }
-
-        // Check if the A button is pressed on the left controller
-        if (leftController.isValid && leftController.TryGetFeatureValue(CommonUsages.primaryButton, out bool isYPressed) && isYPressed)
-        {
-            jumpscareChance = 100f;
-        }
     }
 
     private IEnumerator ToggleCoolDownRoutine()
@@ -110,14 +99,10 @@ public class FlashlightManager : MonoBehaviour
     {
         if (!isRecharging && canTurnOn)
         {
-            // Play click audio
             audioSource.PlayOneShot(audioClips[0]);
             flashlight_MAT.EnableKeyword("_EMISSION");
             spotLight.enabled = true;
             isLightOn = true;
-
-            StartCoroutine(FlashlightDies());
-            UpdateJumpscareChance();
         }
     }
 
@@ -126,85 +111,40 @@ public class FlashlightManager : MonoBehaviour
         flashlight_MAT.DisableKeyword("_EMISSION");
         spotLight.enabled = false;
         isLightOn = false;
-        UpdateJumpscareChance();
     }
 
-    IEnumerator FlashlightDies()
+    private void UpdateJumpscareTimer()
     {
-        //float startIntensity = fullIntensity;
-        float elapsedTime = 0;
-
-        while (remainingBattery > 0)
+        if (!isLightOn)
         {
-            elapsedTime += Time.deltaTime;
-            remainingBattery = Mathf.Clamp(10.0f - elapsedTime, 0, 10.0f); // Decrease battery smoothly over time
-            //spotLight.intensity = Mathf.Lerp(startIntensity, 0, elapsedTime / 10.0f); // Dim over 6 seconds
+            // Increment the timer only when the light is off
+            jumpscareTimer += Time.deltaTime;
 
-            if (!isLightOn)
+            // Play the halfway cue if not already played
+            if (!halfwayCuePlayed && jumpscareTimer >= jumpscareThreshold / 2)
             {
-                // Save remaining battery when the light is turned off manually
-                yield break;
+                audioSource.PlayOneShot(audioClips[2]); // Halfway cue audio
+                halfwayCuePlayed = true;
             }
 
-
-            if (remainingBattery <= 0)
+            // Trigger jumpscare if the timer exceeds the threshold
+            if (jumpscareTimer >= jumpscareThreshold)
             {
-                // Battery depleted
-                audioSource.PlayOneShot(audioClips[1]); // Play battery depletion sound
-                LightOff();
-                StartCoroutine(RechargeFlashlight());
-                yield break;
+                TriggerJumpscare();
+                jumpscareTimer = 0f; // Reset timer
+                halfwayCuePlayed = false; // Reset halfway cue
             }
-
-            Debug.Log("Fade Light ElapsedTime = " + elapsedTime);
-            yield return null;
-        }
-    }
-
-    IEnumerator RechargeFlashlight()
-    {
-        isRecharging = true;
-        canTurnOn = false;
-
-        yield return new WaitForSeconds(rechargeTime); // Wait for 5 seconds to recharge
-
-        remainingBattery = 10.0f; // Reset battery after recharge
-        isRecharging = false;
-        canTurnOn = true; // Allow flashlight to turn on again
-    }
-
-    private void UpdateJumpscareChance()
-    {
-        if (isLightOn)
-        {
-            jumpscareChance = Random.Range(50f, 100f); // 50-100% chance when flashlight is on
         }
         else
         {
-            jumpscareChance = Random.Range(0f, 40f); // 0-40% chance when flashlight is off
+            // Pause the timer when the light is on
         }
-
-        // Increase the chance slightly for each use
-        jumpscareChance += isLightOn ? Random.Range(0.1f, 1.0f) : Random.Range(0f, 0.5f);
-
-        Debug.Log($"JumpscareChance = {jumpscareChance}");
     }
 
-    void CheckJumpscare()
+    private void TriggerJumpscare()
     {
-        // Determine if a jumpscare happens
-        if (jumpscareChance >= 85f)
-        {
-            // Simulate different types of jumpscares
-            int jumpscareType = Random.Range(1, 4); // Jumpscare types 1, 2, 3
-            Debug.Log($"Jumpscare occurred! Type: {jumpscareType}, Chance: {jumpscareChance}%");
-
-            // call event on jumpscare manager to do jumpscare
-            //if (OnJumpscare != null) OnJumpscare(jumpscareType);
-            OnJumpscare?.Invoke(jumpscareType);
-
-            // Reset the chance after a jumpscare occurs
-            jumpscareChance = 0f;
-        }
+        int jumpscareType = Random.Range(1, 4); // Random jumpscare type
+        Debug.Log($"Jumpscare triggered! Type: {jumpscareType}");
+        OnJumpscare?.Invoke(jumpscareType);
     }
 }

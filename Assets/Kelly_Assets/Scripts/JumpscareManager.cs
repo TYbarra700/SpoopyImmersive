@@ -60,7 +60,7 @@ public class JumpscareManager : MonoBehaviour
         yield return StartCoroutine(FadeEffect());
 
         // Wait briefly before fading back in
-        yield return new WaitForSeconds(1.5f);
+        yield return new WaitForSeconds(1f);
 
         // Fade back to normal
         hands.gameObject.SetActive(false);
