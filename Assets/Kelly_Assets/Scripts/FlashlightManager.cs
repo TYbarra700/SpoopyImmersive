@@ -119,6 +119,7 @@ public class FlashlightManager : MonoBehaviour
         {
             // Increment the timer only when the light is off
             jumpscareTimer += Time.deltaTime;
+            Debug.Log("Timer =" + jumpscareTimer);
 
             // Play the halfway cue if not already played
             if (!halfwayCuePlayed && jumpscareTimer >= jumpscareThreshold / 2)
@@ -133,6 +134,7 @@ public class FlashlightManager : MonoBehaviour
                 TriggerJumpscare();
                 jumpscareTimer = 0f; // Reset timer
                 halfwayCuePlayed = false; // Reset halfway cue
+                jumpscareThreshold += Random.Range(0f,10f);
             }
         }
         else
