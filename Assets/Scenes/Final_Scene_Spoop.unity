@@ -13195,8 +13195,8 @@ MonoBehaviour:
   jumpscareSound: {fileID: 8300000, guid: b40881307a192af499192984ca9acac1, type: 3}
   _material: {fileID: 2100000, guid: 0bd47d26c27f2e84c8c6bdefc505662c, type: 2}
   fadeBox: {fileID: 124897654}
-  handOffset: {x: 0.2, y: 0, z: 0.1}
-  handRotationOffset: {x: 0, y: -90, z: 0}
+  handOffset: {x: 0, y: -1.71, z: 0.3}
+  handRotationOffset: {x: 0, y: -180, z: 0}
 --- !u!4 &1144850303
 Transform:
   m_ObjectHideFlags: 0
@@ -20839,7 +20839,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1927553548
 MonoBehaviour:
   m_ObjectHideFlags: 0
