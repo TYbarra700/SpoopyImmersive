@@ -19,6 +19,7 @@ public class JumpscareManager : MonoBehaviour
     [SerializeField] private Vector3 handRotationOffset = new Vector3(0, 180, 0); // Editable offset for hand rotation
     
     private Color32 spookyGreen = new Color32(33, 93, 31, 150);
+    public bool isJumpscareActive { get; private set; } = false;
     //[SerializeField] private Image screenOverlay; // UI Image used as a green filter
     //[SerializeField] private CanvasGroup fadeCanvasGroup; // To control camera fade-in and fade-out
 
@@ -41,8 +42,10 @@ public class JumpscareManager : MonoBehaviour
 
     private void TriggerJumpscare(int jumpscareType)
     {
+        if (isJumpscareActive) return; // Prevent simultaneous jumpscares
         move.SetActive(false); // Disable player movement during jumpscare
 
+        isJumpscareActive = true;
         if (jumpscareType == 1)
         {
             StartCoroutine(PlayJumpscare1());
@@ -55,10 +58,17 @@ public class JumpscareManager : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (jumpscareTriggerZone != null && other.CompareTag("JumpscareTriggerZone"))
+        if (jumpscareTriggerZone != null && other.CompareTag("Player"))
         {
-            TriggerJumpscare(2); // Activate jumpscare type 2 when entering trigger zone
+            if (!isJumpscareActive)
+            {
+                TriggerJumpscare(2); // Activate jumpscare type 2 when entering trigger zone
+                Debug.Log("Jumpscare should appear");
+            }
+            
         }
+
+        Debug.Log("trigger entered");
     }
 
     private IEnumerator PlayJumpscare1()

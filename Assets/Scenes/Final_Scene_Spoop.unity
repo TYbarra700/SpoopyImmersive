@@ -4266,6 +4266,33 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3276199319188809127, guid: ed93f25c7c7a22c4391b4e964e061403, type: 3}
   m_PrefabInstance: {fileID: 9068109559934000739}
   m_PrefabAsset: {fileID: 0}
+--- !u!54 &379289905
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 379289898}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &381405622
 GameObject:
   m_ObjectHideFlags: 0
@@ -11264,6 +11291,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 29a944a6224fb9147901610ecd00db91, type: 3}
   isLightOn: 1
   lightIntensity: 4.06
+  jumpscareManager: {fileID: 1144850302}
 --- !u!4 &913754631
 Transform:
   m_ObjectHideFlags: 0
@@ -17591,6 +17619,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 937335085}
     m_Modifications:
+    - target: {fileID: 1279022342084640, guid: 5610a49d552a2d24591c1f02a36f6c22, type: 3}
+      propertyPath: m_TagString
+      value: JumpscareTriggerZone
+      objectReference: {fileID: 0}
     - target: {fileID: 1814085079043550, guid: 5610a49d552a2d24591c1f02a36f6c22, type: 3}
       propertyPath: m_Name
       value: TV01
@@ -17902,8 +17934,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.8225707, y: 0.7368953, z: 1}
-  m_Center: {x: -0.0259177, y: -0.13155216, z: -9.78969e-16}
+  m_Size: {x: 0.89819, y: 0.7368953, z: 1.0587379}
+  m_Center: {x: -0.06372771, y: -0.13155216, z: 0.029369004}
 --- !u!1 &1608416115
 GameObject:
   m_ObjectHideFlags: 0
@@ -24511,6 +24543,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 55925914717073648, guid: ed93f25c7c7a22c4391b4e964e061403, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3276199319188809127, guid: ed93f25c7c7a22c4391b4e964e061403, type: 3}
       propertyPath: m_LocalPosition.x
       value: -8.721
@@ -24559,11 +24595,19 @@ PrefabInstance:
       propertyPath: near clip plane
       value: 0.01
       objectReference: {fileID: 0}
+    - target: {fileID: 4913309063042528873, guid: ed93f25c7c7a22c4391b4e964e061403, type: 3}
+      propertyPath: m_TagString
+      value: Player
+      objectReference: {fileID: 0}
     - target: {fileID: 5531301697940172479, guid: ed93f25c7c7a22c4391b4e964e061403, type: 3}
       propertyPath: m_Name
       value: XR Origin (XR Rig)
       objectReference: {fileID: 0}
     - target: {fileID: 5531301697940172479, guid: ed93f25c7c7a22c4391b4e964e061403, type: 3}
+      propertyPath: m_TagString
+      value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 6887961414559708576, guid: ed93f25c7c7a22c4391b4e964e061403, type: 3}
       propertyPath: m_TagString
       value: Player
       objectReference: {fileID: 0}
@@ -24574,6 +24618,10 @@ PrefabInstance:
     - target: {fileID: 7640283319775522649, guid: ed93f25c7c7a22c4391b4e964e061403, type: 3}
       propertyPath: m_LocalPosition.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7798682680212123514, guid: ed93f25c7c7a22c4391b4e964e061403, type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7798682680212123514, guid: ed93f25c7c7a22c4391b4e964e061403, type: 3}
       propertyPath: m_CameraYOffset
@@ -24618,6 +24666,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 5531301697940172479, guid: ed93f25c7c7a22c4391b4e964e061403, type: 3}
       insertIndex: -1
       addedObject: {fileID: 379289899}
+    - targetCorrespondingSourceObject: {fileID: 5531301697940172479, guid: ed93f25c7c7a22c4391b4e964e061403, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 379289905}
     - targetCorrespondingSourceObject: {fileID: 4913309063042528873, guid: ed93f25c7c7a22c4391b4e964e061403, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1297425229}

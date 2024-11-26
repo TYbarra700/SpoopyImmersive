@@ -25,10 +25,12 @@ public class FlashlightManager : MonoBehaviour
     private float jumpscareThreshold = 20f; // Time in seconds before a jumpscare happens
     private bool halfwayCuePlayed = false;
 
+    [SerializeField] private JumpscareManager jumpscareManager;
     public delegate void JumpscareAction(int jumpscareType);
     public static event JumpscareAction OnJumpscare;
     private InputDevice leftController;
     private InputDevice rightController;
+
 
     void Start()
     {
@@ -145,8 +147,11 @@ public class FlashlightManager : MonoBehaviour
 
     private void TriggerJumpscare()
     {
-        int jumpscareType = Random.Range(1, 4); // Random jumpscare type
-        Debug.Log($"Jumpscare triggered! Type: {jumpscareType}");
-        OnJumpscare?.Invoke(jumpscareType);
+        //int jumpscareType = Random.Range(1, 4); // Random jumpscare type
+        //Debug.Log($"Jumpscare triggered! Type: {jumpscareType}");
+
+        if (jumpscareManager.isJumpscareActive) return;
+        int zombieHandsJumpscareType = 1;
+        OnJumpscare?.Invoke(zombieHandsJumpscareType);
     }
 }
