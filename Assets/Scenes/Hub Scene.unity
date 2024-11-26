@@ -622,6 +622,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 638cd0516ba33174cba456010ec2b87e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mainMenu: {fileID: 1645235790}
+  controlsMenu: {fileID: 1911180846}
 --- !u!4 &123063807
 Transform:
   m_ObjectHideFlags: 0
@@ -6420,7 +6422,7 @@ GameObject:
   - component: {fileID: 1506402807}
   - component: {fileID: 1506402806}
   m_Layer: 5
-  m_Name: Start
+  m_Name: back
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6492,7 +6494,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 123063806}
         m_TargetAssemblyTypeName: MainMenuManager, Assembly-CSharp
-        m_MethodName: 
+        m_MethodName: BackToMainMenu
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -7459,7 +7461,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1645235791
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9188,7 +9190,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1911180847
 RectTransform:
   m_ObjectHideFlags: 0
@@ -10028,7 +10030,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 123063806}
         m_TargetAssemblyTypeName: MainMenuManager, Assembly-CSharp
-        m_MethodName: 
+        m_MethodName: ShowControlsMenu
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
