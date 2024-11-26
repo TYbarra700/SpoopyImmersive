@@ -8894,7 +8894,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hands: {fileID: 1391587074}
+  jumpscareTriggerZone: {fileID: 0}
   player: {fileID: 9068109559934000741}
+  tv: {fileID: 0}
+  crawlingZombie: {fileID: 0}
+  move: {fileID: 0}
   audioSource: {fileID: 1998005797}
   jumpscareSound: {fileID: 8300000, guid: b40881307a192af499192984ca9acac1, type: 3}
   _material: {fileID: 2100000, guid: 0bd47d26c27f2e84c8c6bdefc505662c, type: 2}
@@ -12967,7 +12971,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 0}
+    m_TransformParent: {fileID: 1144850303}
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 7fa0171600cee734ca35fbd99077f709, type: 3}
       propertyPath: m_LocalScale.x
@@ -12999,15 +13003,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 7fa0171600cee734ca35fbd99077f709, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 7fa0171600cee734ca35fbd99077f709, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 7fa0171600cee734ca35fbd99077f709, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 7fa0171600cee734ca35fbd99077f709, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -13171,7 +13175,7 @@ GameObject:
   - component: {fileID: 1144850303}
   - component: {fileID: 1144850302}
   m_Layer: 0
-  m_Name: ZombieHandsJumpscare
+  m_Name: JumpscareManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -13190,7 +13194,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hands: {fileID: 1742795092}
+  jumpscareTriggerZone: {fileID: 1607472572}
   player: {fileID: 9068109559934000741}
+  tv: {fileID: 1568937240}
+  crawlingZombie: {fileID: 1514456724}
+  move: {fileID: 1927553547}
   audioSource: {fileID: 1998005797}
   jumpscareSound: {fileID: 8300000, guid: b40881307a192af499192984ca9acac1, type: 3}
   _material: {fileID: 2100000, guid: 0bd47d26c27f2e84c8c6bdefc505662c, type: 2}
@@ -13211,6 +13219,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1742795092}
+  - {fileID: 1514456724}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1168717003
@@ -17239,6 +17248,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 317029946079425421, guid: 094b5e0777b67a64f88ce0eb50166234, type: 3}
   m_PrefabInstance: {fileID: 1498763364}
   m_PrefabAsset: {fileID: 0}
+--- !u!4 &1514456724 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 7fa0171600cee734ca35fbd99077f709, type: 3}
+  m_PrefabInstance: {fileID: 1136836298}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1517517019
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -17636,7 +17650,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1279022342084640, guid: 5610a49d552a2d24591c1f02a36f6c22, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1607472572}
   m_SourcePrefab: {fileID: 100100000, guid: 5610a49d552a2d24591c1f02a36f6c22, type: 3}
 --- !u!4 &1568937240 stripped
 Transform:
@@ -17861,6 +17878,32 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7512023185531021596, guid: bd75deb20c1e65f43b506a25a0b3b293, type: 3}
   m_PrefabInstance: {fileID: 1587967545}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1607472570 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1279022342084640, guid: 5610a49d552a2d24591c1f02a36f6c22, type: 3}
+  m_PrefabInstance: {fileID: 1568937239}
+  m_PrefabAsset: {fileID: 0}
+--- !u!65 &1607472572
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1607472570}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.8225707, y: 0.7368953, z: 1}
+  m_Center: {x: -0.0259177, y: -0.13155216, z: -9.78969e-16}
 --- !u!1 &1608416115
 GameObject:
   m_ObjectHideFlags: 0
@@ -19883,7 +19926,7 @@ Transform:
   m_GameObject: {fileID: 1778922420}
   serializedVersion: 2
   m_LocalRotation: {x: -0.27778345, y: 0.27778345, z: 0.6502587, w: -0.6502587}
-  m_LocalPosition: {x: 4.614668, y: -0.42299986, z: -1.9413843}
+  m_LocalPosition: {x: 4.614668, y: -0.3956, z: -1.9413843}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -20839,7 +20882,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1927553548
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -24613,4 +24656,3 @@ SceneRoots:
   - {fileID: 1703569875}
   - {fileID: 1725993490}
   - {fileID: 1144850303}
-  - {fileID: 1136836298}

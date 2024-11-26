@@ -5,7 +5,11 @@ using UnityEngine.UI;
 public class JumpscareManager : MonoBehaviour
 {
     [SerializeField] private Transform hands;
+    [SerializeField] private Collider jumpscareTriggerZone;
     [SerializeField] private Transform player;
+    [SerializeField] private Transform tv; // The TV position
+    [SerializeField] private Transform crawlingZombie; // For jumpscare type 2
+    [SerializeField] private GameObject move; // The locomotion GameObject
     [SerializeField] private AudioSource audioSource;
     [SerializeField] private AudioClip jumpscareSound;
     [SerializeField] private Material _material;
@@ -31,15 +35,33 @@ public class JumpscareManager : MonoBehaviour
     private void Start()
     {
         hands.gameObject.SetActive(false); // Hide hands initially
+        crawlingZombie.gameObject.SetActive(false); // Hide crawling zombie initially
         fadeBox.SetActive(false);
     }
 
     private void TriggerJumpscare(int jumpscareType)
     {
-        StartCoroutine(PlayJumpscare());
+        move.SetActive(false); // Disable player movement during jumpscare
+
+        if (jumpscareType == 1)
+        {
+            StartCoroutine(PlayJumpscare1());
+        }
+        else if (jumpscareType == 2)
+        {
+            StartCoroutine(PlayJumpscare2());
+        }
     }
 
-    private IEnumerator PlayJumpscare()
+    private void OnTriggerEnter(Collider other)
+    {
+        if (jumpscareTriggerZone != null && other.CompareTag("JumpscareTriggerZone"))
+        {
+            TriggerJumpscare(2); // Activate jumpscare type 2 when entering trigger zone
+        }
+    }
+
+    private IEnumerator PlayJumpscare1()
     {
         // Temporarily parent the hands to the player's camera (head)
         Transform originalParent = hands.parent;
@@ -70,7 +92,30 @@ public class JumpscareManager : MonoBehaviour
         yield return StartCoroutine(FadeToClear());
 
         fadeBox.SetActive(false);
+        move.SetActive(true);
     }
+
+    private IEnumerator PlayJumpscare2()
+    {
+        // Position and orient the crawling zombie at the TV facing the player body
+        crawlingZombie.position = tv.position;
+        crawlingZombie.rotation = Quaternion.LookRotation(player.position - tv.position);
+        crawlingZombie.gameObject.SetActive(true);
+
+        if (!audioSource.isPlaying) audioSource.PlayOneShot(jumpscareSound);
+
+        yield return new WaitForSeconds(3f); // Wait for the zombie to crawl
+
+        yield return StartCoroutine(FadeEffect());
+        yield return new WaitForSeconds(1f);
+
+        crawlingZombie.gameObject.SetActive(false);
+        yield return StartCoroutine(FadeToClear());
+
+        fadeBox.SetActive(false);
+        move.SetActive(true); // Re-enable player movement
+    }
+
     //private IEnumerator FadeToBlack()
     //{
     //    float duration = 0.5f;
