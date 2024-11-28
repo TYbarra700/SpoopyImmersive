@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR;
 using UnityEngine.XR.Interaction.Toolkit;
+using UnityEngine.UI;
 
 public class FlashlightManager : MonoBehaviour
 {
@@ -11,6 +12,8 @@ public class FlashlightManager : MonoBehaviour
     [SerializeField] private Light spotLight;
     [SerializeField] private AudioSource audioSource;
     [SerializeField] private AudioClip[] audioClips; // 0 is click sfx; 1 is battery going out; 2 is halfway cue
+    [SerializeField] private Scrollbar batteryScrollbar; // Attach your Scrollbar in the Inspector
+    [SerializeField] private Image batteryFillImage;     // Attach the Image that represents the scrollbar fill
 
     [SerializeField] private bool isLightOn = false;
     [SerializeField] private float lightIntensity = 4.06f;
@@ -56,6 +59,7 @@ public class FlashlightManager : MonoBehaviour
 
         UpdateLightState();
         UpdateJumpscareTimer();
+        UpdateBatteryUI();
     }
 
     private void AssignControllers()
@@ -87,7 +91,7 @@ public class FlashlightManager : MonoBehaviour
 
     private void HandleTriggerPress(bool isTriggerPressed)
     {
-        if (isTriggerPressed && !wasTriggerPressed && !toggleCoolDown)
+        if ((isTriggerPressed && !wasTriggerPressed && !toggleCoolDown) || Input.GetKeyDown(KeyCode.L))
         {
             // Toggle light on/off
             if (isLightOn)
@@ -247,5 +251,26 @@ public class FlashlightManager : MonoBehaviour
         // Unsubscribe from grab/release events to prevent memory leaks
         grabInteractable.selectEntered.RemoveListener(OnGrab);
         grabInteractable.selectExited.RemoveListener(OnRelease);
+    }
+
+    private void UpdateBatteryUI()
+    {
+        // Update the scrollbar value
+        float batteryPercentage = remainingBattery / batteryLife;
+        batteryScrollbar.size = batteryPercentage;
+
+        // Change the color based on the battery percentage
+        if (batteryPercentage > 0.7f)
+        {
+            batteryFillImage.color = Color.green;
+        }
+        else if (batteryPercentage > 0.45f)
+        {
+            batteryFillImage.color = Color.yellow;
+        }
+        else
+        {
+            batteryFillImage.color = Color.red;
+        }
     }
 }
