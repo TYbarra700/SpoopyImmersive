@@ -60,6 +60,7 @@ public class FlashlightManager : MonoBehaviour
         UpdateLightState();
         UpdateJumpscareTimer();
         UpdateBatteryUI();
+        //FlashlightUIFollows();
     }
 
     private void AssignControllers()
@@ -264,13 +265,26 @@ public class FlashlightManager : MonoBehaviour
         {
             batteryFillImage.color = Color.green;
         }
-        else if (batteryPercentage > 0.45f)
+        else if (batteryPercentage > 0.3f)
         {
             batteryFillImage.color = Color.yellow;
         }
         else
         {
             batteryFillImage.color = Color.red;
+        }
+    }
+
+    private void FlashlightUIFollows()
+    {
+        Transform scrollbarTransform = batteryScrollbar.transform;
+        Transform flashlightTransform = flashlight_OBJ.transform;
+
+        // Ensure the scrollbar follows the flashlight
+        if (scrollbarTransform != null && flashlightTransform != null)
+        {
+            scrollbarTransform.position = flashlightTransform.position + flashlightTransform.right * 0.2f; // Adjust offset as needed
+            scrollbarTransform.rotation = flashlightTransform.rotation;
         }
     }
 }
