@@ -86,6 +86,7 @@ public class JumpscareManager : MonoBehaviour
         yield return new WaitForSeconds(1.5f);
 
         // Fade to black
+        fadeBox.SetActive(true);
         yield return StartCoroutine(FadeEffect());
 
         // Wait briefly before fading back in
@@ -122,23 +123,9 @@ public class JumpscareManager : MonoBehaviour
             audioSource.PlayOneShot(raspySound);
         }
 
-        //// Crawl towards the player for a few seconds
-        //float crawlDuration = 3f;
-        //float elapsed = 0f;
-        //float crawlSpeed = 2f; // Adjust speed as needed
+        yield return new WaitForSeconds(1.5f); // Allow time for the scare effect
 
-        //while (elapsed < crawlDuration)
-        //{
-        //    // Move zombie towards the player on the floor
-        //    Vector3 targetPosition = new Vector3(player.position.x, crawlingZombie.position.y, player.position.z);
-        //    crawlingZombie.position = Vector3.MoveTowards(crawlingZombie.position, targetPosition, crawlSpeed * Time.deltaTime);
-
-        //    elapsed += Time.deltaTime;
-        //    yield return null;
-        //}
-
-        yield return new WaitForSeconds(3f); // Allow time for the scare effect
-
+        fadeBox.SetActive(true);
         yield return StartCoroutine(FadeEffect());
         yield return new WaitForSeconds(1f);
 
@@ -180,7 +167,7 @@ public class JumpscareManager : MonoBehaviour
         //    screenOverlay.color = Color.black;
         //}
 
-        private IEnumerator FadeEffect()
+    private IEnumerator FadeEffect()
     {
         float duration = 0.5f;
         float elapsedTime = 0;

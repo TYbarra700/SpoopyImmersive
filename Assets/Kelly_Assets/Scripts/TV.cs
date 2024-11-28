@@ -21,11 +21,16 @@ public class TV : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-
-        if (countNumJumpscared < 2 && jumpscareTriggerZone != null && other.CompareTag("Player"))
+        if (countNumJumpscared < 2 && jumpscareTriggerZone != null)
         {
-            jumpscareManager.TriggerJumpscare(2); // Trigger crawling zombie jumpscare
+            if (other.CompareTag("Player") || other.CompareTag("LeftHand") || other.CompareTag("RightHand"))
+            {
+            
+                jumpscareManager.TriggerJumpscare(2); // Trigger crawling zombie jumpscare
+            }
         }
+
+        
 
         //Debug.Log("Collided with" + other.name);
     }

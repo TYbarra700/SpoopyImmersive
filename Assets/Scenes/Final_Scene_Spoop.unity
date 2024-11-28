@@ -11333,6 +11333,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 29a944a6224fb9147901610ecd00db91, type: 3}
   isLightOn: 1
   lightIntensity: 4.06
+  grabInteractable: {fileID: 913754628}
   jumpscareManager: {fileID: 1144850302}
 --- !u!4 &913754631
 Transform:
@@ -25758,7 +25759,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4913309063042528873, guid: ed93f25c7c7a22c4391b4e964e061403, type: 3}
       propertyPath: m_TagString
-      value: Player
+      value: LeftHand
       objectReference: {fileID: 0}
     - target: {fileID: 5531301697940172479, guid: ed93f25c7c7a22c4391b4e964e061403, type: 3}
       propertyPath: m_Name
@@ -25770,7 +25771,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6887961414559708576, guid: ed93f25c7c7a22c4391b4e964e061403, type: 3}
       propertyPath: m_TagString
-      value: Player
+      value: RightHand
       objectReference: {fileID: 0}
     - target: {fileID: 7188034888767135645, guid: ed93f25c7c7a22c4391b4e964e061403, type: 3}
       propertyPath: m_LocalPosition.y
