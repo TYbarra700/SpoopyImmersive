@@ -40,7 +40,7 @@ public class JumpscareManager : MonoBehaviour
         fadeBox.SetActive(false);
     }
 
-    private void TriggerJumpscare(int jumpscareType)
+    public void TriggerJumpscare(int jumpscareType)
     {
         if (isJumpscareActive) return; // Prevent simultaneous jumpscares
         move.SetActive(false); // Disable player movement during jumpscare
@@ -56,20 +56,20 @@ public class JumpscareManager : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter(Collider other)
-    {
-        if (jumpscareTriggerZone != null && other.CompareTag("Player"))
-        {
-            if (!isJumpscareActive)
-            {
-                TriggerJumpscare(2); // Activate jumpscare type 2 when entering trigger zone
-                Debug.Log("Jumpscare should appear");
-            }
+    //private void OnTriggerEnter(Collider other)
+    //{
+    //    if (jumpscareTriggerZone != null && other.CompareTag("Player"))
+    //    {
+    //        if (!isJumpscareActive)
+    //        {
+    //            TriggerJumpscare(2); // Activate jumpscare type 2 when entering trigger zone
+    //            Debug.Log("Jumpscare should appear");
+    //        }
             
-        }
+    //    }
 
-        Debug.Log("trigger entered");
-    }
+    //    Debug.Log("Collided with" + other.name);
+    //}
 
     private IEnumerator PlayJumpscare1()
     {
@@ -103,6 +103,7 @@ public class JumpscareManager : MonoBehaviour
 
         fadeBox.SetActive(false);
         move.SetActive(true);
+        isJumpscareActive = false;
     }
 
     private IEnumerator PlayJumpscare2()
@@ -124,6 +125,7 @@ public class JumpscareManager : MonoBehaviour
 
         fadeBox.SetActive(false);
         move.SetActive(true); // Re-enable player movement
+        isJumpscareActive = false;
     }
 
     //private IEnumerator FadeToBlack()
