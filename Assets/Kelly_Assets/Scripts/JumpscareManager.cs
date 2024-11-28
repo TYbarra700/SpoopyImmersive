@@ -7,18 +7,19 @@ public class JumpscareManager : MonoBehaviour
     [SerializeField] private Transform hands;
     [SerializeField] private Collider jumpscareTriggerZone;
     [SerializeField] private Transform player;
-    [SerializeField] private Transform tv; // The TV position
+    [SerializeField] private Transform drawer; // drawer position
     [SerializeField] private Transform crawlingZombie; // For jumpscare type 2
     [SerializeField] private GameObject move; // The locomotion GameObject
     [SerializeField] private AudioSource audioSource;
-    [SerializeField] private AudioClip jumpscareSound;
+    [SerializeField] private AudioClip gushSound;
+    [SerializeField] private AudioClip raspySound;
+    [SerializeField] private AudioClip pianoSound;
     [SerializeField] private Material _material;
     [SerializeField] private GameObject fadeBox;
 
     [SerializeField] private Vector3 handOffset = new Vector3(0, -0.3f, 1.0f); // Editable offset for hand position
     [SerializeField] private Vector3 handRotationOffset = new Vector3(0, 180, 0); // Editable offset for hand rotation
-    
-    private Color32 spookyGreen = new Color32(33, 93, 31, 150);
+    [SerializeField] private TV tvScript;
     public bool isJumpscareActive { get; private set; } = false;
     //[SerializeField] private Image screenOverlay; // UI Image used as a green filter
     //[SerializeField] private CanvasGroup fadeCanvasGroup; // To control camera fade-in and fade-out
@@ -43,33 +44,29 @@ public class JumpscareManager : MonoBehaviour
     public void TriggerJumpscare(int jumpscareType)
     {
         if (isJumpscareActive) return; // Prevent simultaneous jumpscares
-        move.SetActive(false); // Disable player movement during jumpscare
 
         isJumpscareActive = true;
         if (jumpscareType == 1)
         {
+            move.SetActive(false); // Disable player movement during jumpscare
             StartCoroutine(PlayJumpscare1());
         }
         else if (jumpscareType == 2)
         {
-            StartCoroutine(PlayJumpscare2());
+            if (tvScript.countNumJumpscared >= 1)
+            {
+                
+                StartCoroutine(PlayJumpscare2Part2());
+            }
+            else
+            {
+                StartCoroutine(PlayJumpscare2());
+                tvScript.countNumJumpscared += 1;
+            }
+            
+            
         }
     }
-
-    //private void OnTriggerEnter(Collider other)
-    //{
-    //    if (jumpscareTriggerZone != null && other.CompareTag("Player"))
-    //    {
-    //        if (!isJumpscareActive)
-    //        {
-    //            TriggerJumpscare(2); // Activate jumpscare type 2 when entering trigger zone
-    //            Debug.Log("Jumpscare should appear");
-    //        }
-            
-    //    }
-
-    //    Debug.Log("Collided with" + other.name);
-    //}
 
     private IEnumerator PlayJumpscare1()
     {
@@ -84,7 +81,7 @@ public class JumpscareManager : MonoBehaviour
         hands.gameObject.SetActive(true);
 
         // Play sound
-        if (!audioSource.isPlaying) audioSource.PlayOneShot(jumpscareSound);
+        if (!audioSource.isPlaying) audioSource.PlayOneShot(gushSound);
 
         yield return new WaitForSeconds(1.5f);
 
@@ -108,14 +105,39 @@ public class JumpscareManager : MonoBehaviour
 
     private IEnumerator PlayJumpscare2()
     {
-        // Position and orient the crawling zombie at the TV facing the player body
-        crawlingZombie.position = tv.position;
-        crawlingZombie.rotation = Quaternion.LookRotation(player.position - tv.position);
+        // Position the crawling zombie at the drawer
+        crawlingZombie.position = drawer.position;
+
+        // Calculate the direction to the player, ignoring the Y-axis
+        Vector3 directionToPlayer = player.position - drawer.position;
+        directionToPlayer.y = 0; // Keep the zombie crawling on the floor
+        crawlingZombie.rotation = Quaternion.LookRotation(directionToPlayer);
+
         crawlingZombie.gameObject.SetActive(true);
 
-        if (!audioSource.isPlaying) audioSource.PlayOneShot(jumpscareSound);
+        // Play sound if not already playing
+        if (!audioSource.isPlaying)
+        {
+            audioSource.volume = 0.3f;
+            audioSource.PlayOneShot(raspySound);
+        }
 
-        yield return new WaitForSeconds(3f); // Wait for the zombie to crawl
+        //// Crawl towards the player for a few seconds
+        //float crawlDuration = 3f;
+        //float elapsed = 0f;
+        //float crawlSpeed = 2f; // Adjust speed as needed
+
+        //while (elapsed < crawlDuration)
+        //{
+        //    // Move zombie towards the player on the floor
+        //    Vector3 targetPosition = new Vector3(player.position.x, crawlingZombie.position.y, player.position.z);
+        //    crawlingZombie.position = Vector3.MoveTowards(crawlingZombie.position, targetPosition, crawlSpeed * Time.deltaTime);
+
+        //    elapsed += Time.deltaTime;
+        //    yield return null;
+        //}
+
+        yield return new WaitForSeconds(3f); // Allow time for the scare effect
 
         yield return StartCoroutine(FadeEffect());
         yield return new WaitForSeconds(1f);
@@ -125,26 +147,40 @@ public class JumpscareManager : MonoBehaviour
 
         fadeBox.SetActive(false);
         move.SetActive(true); // Re-enable player movement
+        audioSource.volume = .94f;
         isJumpscareActive = false;
     }
 
-    //private IEnumerator FadeToBlack()
-    //{
-    //    float duration = 0.5f;
-    //    float elapsedTime = 0;
+    private IEnumerator PlayJumpscare2Part2()
+    {
+        if (!audioSource.isPlaying)
+        {
+            audioSource.volume = 0.25f;
+            audioSource.PlayOneShot(pianoSound);
+        }
+        tvScript.countNumJumpscared += 1;
 
-    //    while (elapsedTime < duration)
-    //    {
-    //        screenOverlay.color = Color.Lerp(spookyGreen, Color.black,  elapsedTime / duration);
-    //        fadeCanvasGroup.alpha = Mathf.Lerp(0.6f, 1, elapsedTime / duration);
-    //        elapsedTime += Time.deltaTime;
-    //        yield return null;
-    //    }
-    //    fadeCanvasGroup.alpha = 1;
-    //    screenOverlay.color = Color.black;
-    //}
+        yield return new WaitForSeconds(3f);
+        audioSource.volume = .94f;
+    }
 
-    private IEnumerator FadeEffect()
+        //private IEnumerator FadeToBlack()
+        //{
+        //    float duration = 0.5f;
+        //    float elapsedTime = 0;
+
+        //    while (elapsedTime < duration)
+        //    {
+        //        screenOverlay.color = Color.Lerp(spookyGreen, Color.black,  elapsedTime / duration);
+        //        fadeCanvasGroup.alpha = Mathf.Lerp(0.6f, 1, elapsedTime / duration);
+        //        elapsedTime += Time.deltaTime;
+        //        yield return null;
+        //    }
+        //    fadeCanvasGroup.alpha = 1;
+        //    screenOverlay.color = Color.black;
+        //}
+
+        private IEnumerator FadeEffect()
     {
         float duration = 0.5f;
         float elapsedTime = 0;

@@ -6,10 +6,11 @@ public class TV : MonoBehaviour
 {
     [SerializeField] private JumpscareManager jumpscareManager;
     [SerializeField] private Collider jumpscareTriggerZone;
+    public int countNumJumpscared;
 
     void Start()
     {
-        
+        countNumJumpscared = 0;
     }
 
     // Update is called once per frame
@@ -21,12 +22,11 @@ public class TV : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
 
-        if (jumpscareTriggerZone != null && other.CompareTag("Player"))
+        if (countNumJumpscared < 2 && jumpscareTriggerZone != null && other.CompareTag("Player"))
         {
             jumpscareManager.TriggerJumpscare(2); // Trigger crawling zombie jumpscare
-            Debug.Log("Crawling zombie jumpscare triggered.");
         }
 
-        Debug.Log("Collided with" + other.name);
+        //Debug.Log("Collided with" + other.name);
     }
 }
