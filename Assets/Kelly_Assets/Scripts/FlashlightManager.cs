@@ -61,7 +61,7 @@ public class FlashlightManager : MonoBehaviour
         UpdateJumpscareTimer();
         UpdateBatteryUI();
         //FlashlightUIFollows();
-        HandleTriggerPress(false);
+        //HandleTriggerPress(false);
     }
 
     private void AssignControllers()
