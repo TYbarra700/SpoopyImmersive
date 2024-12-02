@@ -20,6 +20,7 @@ public class JumpscareManager : MonoBehaviour
     [SerializeField] private Vector3 handOffset = new Vector3(0, -0.3f, 1.0f); // Editable offset for hand position
     [SerializeField] private Vector3 handRotationOffset = new Vector3(0, 180, 0); // Editable offset for hand rotation
     [SerializeField] private TV tvScript;
+    [SerializeField] private FlashlightManager flashlightManager;
     public bool isJumpscareActive { get; private set; } = false;
     //[SerializeField] private Image screenOverlay; // UI Image used as a green filter
     //[SerializeField] private CanvasGroup fadeCanvasGroup; // To control camera fade-in and fade-out
@@ -45,14 +46,21 @@ public class JumpscareManager : MonoBehaviour
     {
         if (isJumpscareActive) return; // Prevent simultaneous jumpscares
 
-        isJumpscareActive = true;
+        
         if (jumpscareType == 1)
         {
-            move.SetActive(false); // Disable player movement during jumpscare
-            StartCoroutine(PlayJumpscare1());
+            // Check if the type 1 jumpscare limit has been reached
+            if (flashlightManager.jumpscare1Count < flashlightManager.jumpscareLimit)
+            {
+                isJumpscareActive = true;
+                move.SetActive(false); // Disable player movement during jumpscare
+                StartCoroutine(PlayJumpscare1());
+            }
+            
         }
         else if (jumpscareType == 2)
         {
+            isJumpscareActive = true;
             if (tvScript.countNumJumpscared >= 1)
             {
                 
@@ -102,6 +110,7 @@ public class JumpscareManager : MonoBehaviour
         fadeBox.SetActive(false);
         move.SetActive(true);
         isJumpscareActive = false;
+        flashlightManager.jumpscare1Count += 1;
     }
 
     private IEnumerator PlayJumpscare2()

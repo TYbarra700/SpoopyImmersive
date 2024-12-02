@@ -27,7 +27,9 @@ public class FlashlightManager : MonoBehaviour
 
     private float jumpscareTimer = 0f;
     private float jumpscareThreshold = 20f; // Time in seconds before a jumpscare happens
-    private bool halfwayCuePlayed = false;
+    private bool thirdwayCuePlayed = false;
+    public int jumpscareLimit = 2;
+    public int jumpscare1Count = 0;
 
     [SerializeField] private XRGrabInteractable grabInteractable;
     [SerializeField] private JumpscareManager jumpscareManager;
@@ -210,17 +212,17 @@ public class FlashlightManager : MonoBehaviour
 
     private void UpdateJumpscareTimer()
     {
-        if (!isLightOn)
+        if (!isLightOn && jumpscare1Count < jumpscareLimit)
         {
             // Increment the timer only when the light is off
             jumpscareTimer += Time.deltaTime;
-            Debug.Log("Timer =" + jumpscareTimer);
+            Debug.Log("Timer =" + jumpscareTimer + "Threshold = " + jumpscareThreshold);
 
-            // Play the halfway cue if not already played
-            if (!halfwayCuePlayed && jumpscareTimer >= jumpscareThreshold / 2)
+            // Play the 2/3 thirdway cue if not already played
+            if (!thirdwayCuePlayed && jumpscareTimer >= 2 * (jumpscareThreshold / 3))
             {
                 audioSource.PlayOneShot(audioClips[2]); // Halfway cue audio
-                halfwayCuePlayed = true;
+                thirdwayCuePlayed = true;
             }
 
             // Trigger jumpscare if the timer exceeds the threshold
@@ -228,7 +230,7 @@ public class FlashlightManager : MonoBehaviour
             {
                 TriggerJumpscare();
                 jumpscareTimer = 0f; // Reset timer
-                halfwayCuePlayed = false; // Reset halfway cue
+                thirdwayCuePlayed = false; // Reset halfway cue
                 jumpscareThreshold += Random.Range(10f,20f);
             }
         }
