@@ -229,7 +229,7 @@ public class FlashlightManager : MonoBehaviour
                 TriggerJumpscare();
                 jumpscareTimer = 0f; // Reset timer
                 halfwayCuePlayed = false; // Reset halfway cue
-                jumpscareThreshold += Random.Range(0f,10f);
+                jumpscareThreshold += Random.Range(10f,20f);
             }
         }
         else
