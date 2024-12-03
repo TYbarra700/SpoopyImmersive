@@ -5,7 +5,9 @@ TagManager:
   serializedVersion: 2
   tags:
   - Key
-  - LightCone
+  - JumpscareTriggerZone
+  - LeftHand
+  - RightHand
   layers:
   - Default
   - TransparentFX

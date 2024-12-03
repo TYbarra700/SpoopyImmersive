@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR;
+using UnityEngine.XR.Interaction.Toolkit;
+using UnityEngine.UI;
 
 public class FlashlightManager : MonoBehaviour
 {
@@ -9,30 +11,44 @@ public class FlashlightManager : MonoBehaviour
     [SerializeField] private GameObject flashlight_OBJ;
     [SerializeField] private Light spotLight;
     [SerializeField] private AudioSource audioSource;
-    [SerializeField] private AudioClip[] audioClips; // 0 is click sfx; 1 is battery going out
+    [SerializeField] private AudioClip[] audioClips; // 0 is click sfx; 1 is battery going out; 2 is halfway cue
+    [SerializeField] private Scrollbar batteryScrollbar; // Attach your Scrollbar in the Inspector
+    [SerializeField] private Image batteryFillImage;     // Attach the Image that represents the scrollbar fill
 
     [SerializeField] private bool isLightOn = false;
     [SerializeField] private float lightIntensity = 4.06f;
-    private float fullIntensity = 4.06f;
-    private float remainingBattery = 10.0f; // 6 seconds of battery
+    private float remainingBattery = 15.0f; // 10 seconds of battery
+    private float batteryLife = 15f;
     private bool isRecharging = false;
-    private float rechargeTime = 9.0f; // 5 seconds recharge time
+    private float rechargeTime = 9.0f; // 9 seconds recharge time
     private bool canTurnOn = true;
     private bool toggleCoolDown = false;
     private bool wasTriggerPressed = false;
 
-    private float jumpscareChance = 0.0f;
-    private bool hasJumpscareOccurred = false;
+    private float jumpscareTimer = 0f;
+    private float jumpscareThreshold = 20f; // Time in seconds before a jumpscare happens
+    private bool thirdwayCuePlayed = false;
+    public int jumpscareLimit = 2;
+    public int jumpscare1Count = 0;
+
+    [SerializeField] private XRGrabInteractable grabInteractable;
+    [SerializeField] private JumpscareManager jumpscareManager;
     public delegate void JumpscareAction(int jumpscareType);
     public static event JumpscareAction OnJumpscare;
     private InputDevice leftController;
     private InputDevice rightController;
+    private bool isHeldByLeftHand = false;
+    private bool isHeldByRightHand = false;
+
 
     void Start()
     {
-        LightOff();
+        LightOn();
         leftController = InputDevices.GetDeviceAtXRNode(XRNode.LeftHand);
         rightController = InputDevices.GetDeviceAtXRNode(XRNode.RightHand);
+
+        grabInteractable.selectEntered.AddListener(OnGrab);
+        grabInteractable.selectExited.AddListener(OnRelease);
     }
 
     void Update()
@@ -44,7 +60,10 @@ public class FlashlightManager : MonoBehaviour
         }
 
         UpdateLightState();
-        CheckJumpscare();
+        UpdateJumpscareTimer();
+        UpdateBatteryUI();
+        //FlashlightUIFollows();
+        //HandleTriggerPress(false);
     }
 
     private void AssignControllers()
@@ -60,43 +79,41 @@ public class FlashlightManager : MonoBehaviour
 
     private void UpdateLightState()
     {
-        // Check if the right controller's trigger is pressed and if it should toggle the flashlight
-        if (rightController.isValid &&
-            rightController.TryGetFeatureValue(CommonUsages.triggerButton, out bool isTriggerPressed))
+        // Check if the flashlight is held by the left hand and process input
+        if (isHeldByLeftHand && leftController.isValid &&
+            leftController.TryGetFeatureValue(CommonUsages.triggerButton, out bool isLeftTriggerPressed))
         {
-            if (isTriggerPressed && !wasTriggerPressed)
-            {
-                // Toggle the flashlight
-                if (isLightOn)
-                {
-                    audioSource.PlayOneShot(audioClips[0]);
-                    LightOff();
-                }
-                else
-                {
-                    LightOn();
-                }
+            HandleTriggerPress(isLeftTriggerPressed);
+        }
+        // Check if the flashlight is held by the right hand and process input
+        else if (isHeldByRightHand && rightController.isValid &&
+            rightController.TryGetFeatureValue(CommonUsages.triggerButton, out bool isRightTriggerPressed))
+        {
+            HandleTriggerPress(isRightTriggerPressed);
+        }
+    }
 
-                // Begin cooldown after toggling
-                StartCoroutine(ToggleCoolDownRoutine());
+    private void HandleTriggerPress(bool isTriggerPressed)
+    {
+        if ((isTriggerPressed && !wasTriggerPressed && !toggleCoolDown) || Input.GetKeyDown(KeyCode.L))
+        {
+            // Toggle light on/off
+            if (isLightOn)
+            {
+                audioSource.PlayOneShot(audioClips[0]);
+                LightOff();
+            }
+            else
+            {
+                LightOn();
             }
 
-            // Update the previous state of the trigger
-            wasTriggerPressed = isTriggerPressed;
+            // Prevent rapid toggling
+            StartCoroutine(ToggleCoolDownRoutine());
         }
 
-
-        // temporary jumpscare test
-        if (Input.GetKeyDown(KeyCode.J))
-        {
-            jumpscareChance = 100f;
-        }
-
-        // Check if the A button is pressed on the left controller
-        if (leftController.isValid && leftController.TryGetFeatureValue(CommonUsages.primaryButton, out bool isYPressed) && isYPressed)
-        {
-            jumpscareChance = 100f;
-        }
+        // Update the previous state of the trigger
+        wasTriggerPressed = isTriggerPressed;
     }
 
     private IEnumerator ToggleCoolDownRoutine()
@@ -110,23 +127,13 @@ public class FlashlightManager : MonoBehaviour
     {
         if (!isRecharging && canTurnOn)
         {
-            // Play click audio
             audioSource.PlayOneShot(audioClips[0]);
             flashlight_MAT.EnableKeyword("_EMISSION");
             spotLight.enabled = true;
             isLightOn = true;
 
             StartCoroutine(FlashlightDies());
-            UpdateJumpscareChance();
         }
-    }
-
-    private void LightOff()
-    {
-        flashlight_MAT.DisableKeyword("_EMISSION");
-        spotLight.enabled = false;
-        isLightOn = false;
-        UpdateJumpscareChance();
     }
 
     IEnumerator FlashlightDies()
@@ -137,7 +144,7 @@ public class FlashlightManager : MonoBehaviour
         while (remainingBattery > 0)
         {
             elapsedTime += Time.deltaTime;
-            remainingBattery = Mathf.Clamp(10.0f - elapsedTime, 0, 10.0f); // Decrease battery smoothly over time
+            remainingBattery = Mathf.Clamp(batteryLife - elapsedTime, 0, batteryLife); // Decrease battery smoothly over time
             //spotLight.intensity = Mathf.Lerp(startIntensity, 0, elapsedTime / 10.0f); // Dim over 6 seconds
 
             if (!isLightOn)
@@ -156,7 +163,7 @@ public class FlashlightManager : MonoBehaviour
                 yield break;
             }
 
-            Debug.Log("Fade Light ElapsedTime = " + elapsedTime);
+            //Debug.Log("Fade Light ElapsedTime = " + elapsedTime);
             yield return null;
         }
     }
@@ -168,43 +175,119 @@ public class FlashlightManager : MonoBehaviour
 
         yield return new WaitForSeconds(rechargeTime); // Wait for 5 seconds to recharge
 
-        remainingBattery = 10.0f; // Reset battery after recharge
+        remainingBattery = batteryLife; // Reset battery after recharge
         isRecharging = false;
         canTurnOn = true; // Allow flashlight to turn on again
     }
 
-    private void UpdateJumpscareChance()
+
+    private void LightOff()
     {
-        if (isLightOn)
+        flashlight_MAT.DisableKeyword("_EMISSION");
+        spotLight.enabled = false;
+        isLightOn = false;
+    }
+
+    private void OnGrab(SelectEnterEventArgs args)
+    {
+        // Determine which hand is grabbing the flashlight
+        if (args.interactorObject.transform.CompareTag("LeftHand"))
         {
-            jumpscareChance = Random.Range(50f, 100f); // 50-100% chance when flashlight is on
+            isHeldByLeftHand = true;
+            isHeldByRightHand = false;
+        }
+        else if (args.interactorObject.transform.CompareTag("RightHand"))
+        {
+            isHeldByRightHand = true;
+            isHeldByLeftHand = false;
+        }
+    }
+
+    private void OnRelease(SelectExitEventArgs args)
+    {
+        // Reset hand states when the flashlight is released
+        isHeldByLeftHand = false;
+        isHeldByRightHand = false;
+    }
+
+    private void UpdateJumpscareTimer()
+    {
+        if (!isLightOn && jumpscare1Count < jumpscareLimit)
+        {
+            // Increment the timer only when the light is off
+            jumpscareTimer += Time.deltaTime;
+            Debug.Log("Timer =" + jumpscareTimer + "Threshold = " + jumpscareThreshold);
+
+            // Play the 2/3 thirdway cue if not already played
+            if (!thirdwayCuePlayed && jumpscareTimer >= 2 * (jumpscareThreshold / 3))
+            {
+                audioSource.PlayOneShot(audioClips[2]); // Halfway cue audio
+                thirdwayCuePlayed = true;
+            }
+
+            // Trigger jumpscare if the timer exceeds the threshold
+            if (jumpscareTimer >= jumpscareThreshold)
+            {
+                TriggerJumpscare();
+                jumpscareTimer = 0f; // Reset timer
+                thirdwayCuePlayed = false; // Reset halfway cue
+                jumpscareThreshold += Random.Range(10f,20f);
+            }
         }
         else
         {
-            jumpscareChance = Random.Range(0f, 40f); // 0-40% chance when flashlight is off
+            // Pause the timer when the light is on
         }
-
-        // Increase the chance slightly for each use
-        jumpscareChance += isLightOn ? Random.Range(0.1f, 1.0f) : Random.Range(0f, 0.5f);
-
-        Debug.Log($"JumpscareChance = {jumpscareChance}");
     }
 
-    void CheckJumpscare()
+    private void TriggerJumpscare()
     {
-        // Determine if a jumpscare happens
-        if (jumpscareChance >= 85f)
+        //int jumpscareType = Random.Range(1, 4); // Random jumpscare type
+        //Debug.Log($"Jumpscare triggered! Type: {jumpscareType}");
+
+        if (jumpscareManager.isJumpscareActive) return;
+        int zombieHandsJumpscareType = 1;
+        OnJumpscare?.Invoke(zombieHandsJumpscareType);
+    }
+
+    private void OnDestroy()
+    {
+        // Unsubscribe from grab/release events to prevent memory leaks
+        grabInteractable.selectEntered.RemoveListener(OnGrab);
+        grabInteractable.selectExited.RemoveListener(OnRelease);
+    }
+
+    private void UpdateBatteryUI()
+    {
+        // Update the scrollbar value
+        float batteryPercentage = remainingBattery / batteryLife;
+        batteryScrollbar.size = batteryPercentage;
+
+        // Change the color based on the battery percentage
+        if (batteryPercentage > 0.7f)
         {
-            // Simulate different types of jumpscares
-            int jumpscareType = Random.Range(1, 4); // Jumpscare types 1, 2, 3
-            Debug.Log($"Jumpscare occurred! Type: {jumpscareType}, Chance: {jumpscareChance}%");
+            batteryFillImage.color = Color.green;
+        }
+        else if (batteryPercentage > 0.3f)
+        {
+            batteryFillImage.color = Color.yellow;
+        }
+        else
+        {
+            batteryFillImage.color = Color.red;
+        }
+    }
 
-            // call event on jumpscare manager to do jumpscare
-            //if (OnJumpscare != null) OnJumpscare(jumpscareType);
-            OnJumpscare?.Invoke(jumpscareType);
+    private void FlashlightUIFollows()
+    {
+        Transform scrollbarTransform = batteryScrollbar.transform;
+        Transform flashlightTransform = flashlight_OBJ.transform;
 
-            // Reset the chance after a jumpscare occurs
-            jumpscareChance = 0f;
+        // Ensure the scrollbar follows the flashlight
+        if (scrollbarTransform != null && flashlightTransform != null)
+        {
+            scrollbarTransform.position = flashlightTransform.position + flashlightTransform.right * 0.2f; // Adjust offset as needed
+            scrollbarTransform.rotation = flashlightTransform.rotation;
         }
     }
 }
