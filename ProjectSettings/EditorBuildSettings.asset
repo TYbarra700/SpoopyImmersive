@@ -14,6 +14,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Thomas_Spoopy_envior.unity
     guid: a7e38a1aaed9e67439cb52afffcb2dbb
+  - enabled: 1
+    path: Assets/Scenes/Credits Scene.unity
+    guid: 79f8ed047da7dd149a5d471630973459
   m_configObjects:
     Unity.XR.Oculus.Settings: {fileID: 11400000, guid: 105531a4185503541a7ab33a6ef1b6da, type: 2}
     com.unity.xr.arfoundation.simulation_settings: {fileID: 11400000, guid: 07b61e89487cfd344bca84e2e8dffb8e, type: 2}
