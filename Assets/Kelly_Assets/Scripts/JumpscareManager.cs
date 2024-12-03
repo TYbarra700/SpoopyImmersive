@@ -60,14 +60,15 @@ public class JumpscareManager : MonoBehaviour
         }
         else if (jumpscareType == 2)
         {
-            isJumpscareActive = true;
+            
             if (tvScript.countNumJumpscared >= 1)
             {
-                
+                isJumpscareActive = true;
                 StartCoroutine(PlayJumpscare2Part2());
             }
             else
             {
+                isJumpscareActive = true;
                 StartCoroutine(PlayJumpscare2());
                 tvScript.countNumJumpscared += 1;
             }
@@ -158,6 +159,7 @@ public class JumpscareManager : MonoBehaviour
 
         yield return new WaitForSeconds(3f);
         audioSource.volume = .94f;
+        isJumpscareActive = false;
     }
 
         //private IEnumerator FadeToBlack()
